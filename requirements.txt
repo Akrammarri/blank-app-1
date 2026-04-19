@@ -1,1 +1,5 @@
 streamlit
+pyquotex
+pandas
+pandas_ta
+python-dotenv
