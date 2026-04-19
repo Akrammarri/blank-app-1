@@ -9,9 +9,37 @@ st.set_page_config(page_title="Quotex Signal Engine", layout="wide")
 st.title("📈 Quotex Live Signal Engine")
 st.write("Fetching live market data and calculating technical indicators.")
 
+# The Master List of Quotex Assets
+quotex_assets = [
+    # Crypto
+    "Bitcoin", "Ethereum", "Binance Coin", "Litecoin", "Dogecoin", "XRP",
+
+    # Major & Minor Forex
+    "EUR/USD", "GBP/USD", "USD/JPY", "USD/CHF", "AUD/USD", "USD/CAD", "NZD/USD",
+    "EUR/GBP", "EUR/JPY", "GBP/JPY", "AUD/JPY", "CAD/JPY", "CHF/JPY", "EUR/AUD", 
+    "EUR/CAD", "EUR/CHF", "EUR/NZD", "GBP/AUD", "GBP/CAD", "GBP/CHF", "GBP/NZD", 
+    "NZD/CAD", "NZD/CHF", "NZD/JPY", "AUD/CAD", "AUD/CHF", "AUD/NZD",
+    
+    # OTC (Weekend) Forex
+    "EUR/USD (OTC)", "GBP/USD (OTC)", "USD/JPY (OTC)", "AUD/USD (OTC)", "USD/CHF (OTC)", 
+    "USD/CAD (OTC)", "NZD/USD (OTC)", "EUR/GBP (OTC)", "EUR/JPY (OTC)", "GBP/JPY (OTC)",
+    "AUD/JPY (OTC)", "CAD/JPY (OTC)", "CHF/JPY (OTC)", "EUR/AUD (OTC)", "EUR/CAD (OTC)",
+    "EUR/CHF (OTC)", "EUR/NZD (OTC)", "GBP/AUD (OTC)", "GBP/CAD (OTC)", "GBP/CHF (OTC)",
+    "GBP/NZD (OTC)", "NZD/CAD (OTC)", "NZD/CHF (OTC)", "NZD/JPY (OTC)", "AUD/CAD (OTC)",
+    "AUD/CHF (OTC)", "AUD/NZD (OTC)",
+    
+    # Commodities
+    "Gold", "Gold (OTC)", "Silver", "Silver (OTC)", "UKBrent", "USCrude",
+    
+    # Stocks / Indices (OTC)
+    "Johnson & Johnson (OTC)", "McDonald's (OTC)", "Microsoft (OTC)", "Intel (OTC)",
+    "Facebook (OTC)", "Cisco (OTC)", "Boeing (OTC)", "Apple (OTC)", "Pfizer (OTC)",
+    "American Express (OTC)", "Visa (OTC)", "MasterCard (OTC)"
+]
+
 # Sidebar for user settings
 st.sidebar.header("Trade Settings")
-asset = st.sidebar.text_input("Asset Pair", value="EUR/USD")
+asset = st.sidebar.selectbox("Select Asset Pair", quotex_assets, index=0)
 timeframe = st.sidebar.selectbox("Timeframe", [60, 300], format_func=lambda x: "1 Minute" if x == 60 else "5 Minutes")
 
 # The main function that connects and does the math
@@ -32,7 +60,7 @@ async def fetch_and_analyze():
         candles = await client.get_candles(asset, timeframe)
         
         if not candles:
-            st.error("Failed to fetch data. The market might be closed, or the asset name is wrong (try adding ' (OTC)').")
+            st.error("Failed to fetch data. The market might be closed, or the asset name is wrong.")
             return
             
         # Convert raw data into a Pandas DataFrame for mathematical calculations
